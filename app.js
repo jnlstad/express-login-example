@@ -12,12 +12,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser()); -- to handle cookies
 
-app.listen(process.env.PORT, () => {
-  console.log("Server is open");
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log("Server is open on port", PORT);
 });
 
 app.get("/", (req, res, next) => {
   res.send("Server is running");
 });
 
+import usersRouter from "./routes/users.js";
 app.use("/users", usersRouter);
