@@ -1,4 +1,5 @@
 import db from "../sequelize.js";
+import { hashPassword } from "../utils/hash.js";
 
 // Make a new user
 
@@ -30,7 +31,7 @@ export const createUser = async (req, res, next) => {
       {
         replacements: {
           username: username,
-          password: password,
+          password: await hashPassword(password),
           name: name,
           age: parseInt(age),
           address: address,
