@@ -7,10 +7,11 @@ import {
   editUser,
   getUsers,
 } from "../controllers/index.js";
+import { authenticate } from "../middleware/authenticate.js";
 
 router.post("/", createUser);
-router.get("/:id", getUser);
+router.get("/:id", authenticate, getUser);
 router.put("/:id", editUser);
-router.get("/", getUsers);
+router.get("/", authenticate, getUsers);
 
 export default router;
