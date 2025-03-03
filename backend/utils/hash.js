@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import CryptoJS from "crypto-js";
 import db from "../sequelize.js";
 
 const saltRounds = 10;
@@ -20,4 +21,8 @@ export async function comparePassword(username, password) {
   } catch (err) {
     throw err;
   }
+}
+
+export async function sha256(text) {
+  return CryptoJS.SHA256(text).toString(CryptoJS.enc.Hex);
 }

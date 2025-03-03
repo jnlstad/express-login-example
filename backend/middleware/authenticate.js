@@ -1,4 +1,5 @@
 import db from "../sequelize.js";
+import { sha256 } from "../utils/hash.js";
 
 export const authenticate = async (req, res, next) => {
   const BEARER_TOKEN = req.headers.authorization;
@@ -9,13 +10,14 @@ export const authenticate = async (req, res, next) => {
     }
 
     const SESSION_TOKEN = BEARER_TOKEN.split(" ")[1];
+    const HASHED_SESSION_TOKEN = await sha256(SESSION_TOKEN);
 
     const result = await db.query(
       `
       select username from t_sessions 
       JOIN t_users ON t_sessions.id = t_users.id
-      WHERE token = :SESSION_TOKEN AND valid_until > SYSUTCDATETIME()`,
-      { replacements: { SESSION_TOKEN } }
+      WHERE token = :HASHED_SESSION_TOKEN AND valid_until > SYSUTCDATETIME()`,
+      { replacements: { HASHED_SESSION_TOKEN } }
     );
 
     const USERNAME = result?.[0]?.[0]?.username || "";

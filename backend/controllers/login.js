@@ -1,5 +1,5 @@
 import db from "../sequelize.js";
-import { comparePassword } from "../utils/hash.js";
+import { comparePassword, sha256 } from "../utils/hash.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const login = async (req, res, next) => {
@@ -19,6 +19,8 @@ export const login = async (req, res, next) => {
     }
 
     const SESSION_TOKEN = uuidv4();
+    const HASHED_SESSION_TOKEN = await sha256(SESSION_TOKEN);
+
     const result = await db.query(
       "SELECT id FROM t_users WHERE username = :username",
       { replacements: { username } }
@@ -26,7 +28,7 @@ export const login = async (req, res, next) => {
     const ID = result[0][0].id;
 
     await db.query("INSERT INTO t_sessions(id, token) VALUES (:id, :token)", {
-      replacements: { id: ID, token: SESSION_TOKEN },
+      replacements: { id: ID, token: HASHED_SESSION_TOKEN },
     });
 
     res.send(SESSION_TOKEN);
