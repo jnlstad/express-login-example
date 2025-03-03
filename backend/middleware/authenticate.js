@@ -2,7 +2,10 @@ import db from "../sequelize.js";
 import { sha256 } from "../utils/hash.js";
 
 export const authenticate = async (req, res, next) => {
-  const BEARER_TOKEN = req.headers.authorization;
+  const BEARER_TOKEN =
+    req.headers.authorization || req.cookies.session_token
+      ? "Bearer " + req.cookies.session_token
+      : "";
 
   try {
     if (!BEARER_TOKEN || !BEARER_TOKEN.startsWith("Bearer")) {

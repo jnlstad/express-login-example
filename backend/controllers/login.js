@@ -31,6 +31,13 @@ export const login = async (req, res, next) => {
       replacements: { id: ID, token: HASHED_SESSION_TOKEN },
     });
 
+    res.cookie("session_token", SESSION_TOKEN, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 1000 * 60 * 60,
+    });
+
     res.send(SESSION_TOKEN);
   } catch (err) {
     return res.status(500).send("An internal server error has occured");
