@@ -30,6 +30,6 @@ app.get("/", (req, res, next) => {
 });
 
 import usersRouter from "./routes/users.js";
-import loginRouter from "./routes/login.js";
+import authRouter from "./routes/auth.js";
 app.use("/users", usersRouter);
-app.use("/login", loginRouter);
+app.use("/auth", authRouter);

@@ -9,9 +9,17 @@ import {
 } from "../controllers/index.js";
 import { authenticate } from "../middleware/authenticate.js";
 
-router.post("/", createUser);
-router.get("/:id", authenticate, getUser);
-router.put("/:id", editUser);
-router.get("/", authenticate, getUsers);
+router.post("/", authenticate, createUser);
+router.get(
+  "/:id",
+  authenticate({ permissions: ["users_admin", "users_view"] }),
+  getUser
+);
+router.put("/:id", authenticate({ permissions: ["users_admin"] }), editUser);
+router.get(
+  "/",
+  authenticate({ permissions: ["users_admin", "users_view"] }),
+  getUsers
+);
 
 export default router;

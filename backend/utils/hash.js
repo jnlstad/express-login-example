@@ -13,7 +13,7 @@ export async function comparePassword(username, password) {
     const result = await db.query(
       "SELECT password FROM t_users WHERE username = :username",
       {
-        replacements: { username: username },
+        replacements: { username },
       }
     );
     const hash = result[0][0].password;
