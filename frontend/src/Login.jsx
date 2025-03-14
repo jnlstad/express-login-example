@@ -12,7 +12,7 @@ export default function Login() {
     console.log(username, password);
 
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,6 +48,14 @@ export default function Login() {
         <input type="submit" value="Submit" />
       </form>
       <p>Login</p>
+      <div
+        style={{
+          width: "200px",
+          backgroundColor: "red",
+          height: "200px",
+          position: "relative",
+        }}
+      ></div>
     </>
   );
 }

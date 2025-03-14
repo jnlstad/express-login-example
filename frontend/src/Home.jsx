@@ -24,8 +24,26 @@ export default function Home() {
     fetchData();
   });
 
+  async function handleLogOut() {
+    try {
+      const response = await fetch("http://localhost:3000/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      if (response.ok) {
+        navigate("/");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <>
+      <button onClick={handleLogOut}>logout</button>
       <p>Home</p>
       <p>{data}</p>
     </>
