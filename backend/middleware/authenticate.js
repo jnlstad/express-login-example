@@ -13,7 +13,7 @@ export const authenticate = ({ permissions }) => {
         return res.status(401).send("Invalid Auth, Missing Bearer Token");
       }
 
-      if (!permissions) {
+      if (!permissions || permissions.length == 0) {
         return next();
       }
 
