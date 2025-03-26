@@ -48,14 +48,6 @@ export default function Login() {
         <input type="submit" value="Submit" />
       </form>
       <p>Login</p>
-      <div
-        style={{
-          width: "200px",
-          backgroundColor: "red",
-          height: "200px",
-          position: "relative",
-        }}
-      ></div>
     </>
   );
 }

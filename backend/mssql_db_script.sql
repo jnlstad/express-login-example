@@ -1,71 +1,53 @@
-USE [expressLogin]
-GO
-/****** Object:  Table [dbo].[t_permissions]    Script Date: 14/03/2025 10:36:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[t_permissions](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[permission_name] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_t_permissions] PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[t_sessions]    Script Date: 14/03/2025 10:36:35 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[t_sessions](
-	[id] [int] NOT NULL,
-	[token] [nvarchar](128) NOT NULL,
-	[valid_until] [datetime2](3) NOT NULL
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[t_user_permissions]    Script Date: 14/03/2025 10:36:35 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[t_user_permissions](
-	[permission_id] [int] NOT NULL,
-	[user_id] [int] NOT NULL
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[t_users]    Script Date: 14/03/2025 10:36:35 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[t_users](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[username] [nvarchar](128) NOT NULL,
-	[password] [nvarchar](1024) NOT NULL,
-	[age] [int] NOT NULL,
-	[name] [nvarchar](128) NOT NULL,
-	[address] [nvarchar](128) NOT NULL,
- CONSTRAINT [PK_t_users] PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [UQ_username] UNIQUE NONCLUSTERED 
-(
-	[username] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[t_sessions] ADD  CONSTRAINT [DF_t_sessions_valid_until]  DEFAULT (dateadd(hour,(1),sysutcdatetime())) FOR [valid_until]
-GO
-ALTER TABLE [dbo].[t_user_permissions]  WITH CHECK ADD  CONSTRAINT [FK_t_user_permissions_t_permissions] FOREIGN KEY([permission_id])
-REFERENCES [dbo].[t_permissions] ([id])
-GO
-ALTER TABLE [dbo].[t_user_permissions] CHECK CONSTRAINT [FK_t_user_permissions_t_permissions]
-GO
-ALTER TABLE [dbo].[t_user_permissions]  WITH CHECK ADD  CONSTRAINT [FK_t_user_permissions_t_users] FOREIGN KEY([user_id])
-REFERENCES [dbo].[t_users] ([id])
-GO
-ALTER TABLE [dbo].[t_user_permissions] CHECK CONSTRAINT [FK_t_user_permissions_t_users]
-GO
+-- t_permissions
+CREATE TABLE dbo.t_permissions (
+    permission_id INT IDENTITY(1,1) NOT NULL,
+    permission_name NVARCHAR(50) NOT NULL,
+    PRIMARY KEY (permission_id),
+);
+
+-- t_users
+CREATE TABLE dbo.t_users (
+    user_id INT IDENTITY(1,1) NOT NULL,
+    username NVARCHAR(128) NOT NULL UNIQUE,
+    password NVARCHAR(1024) NOT NULL,
+    age INT NOT NULL,
+    name NVARCHAR(128) NOT NULL,
+    address NVARCHAR(128) NOT NULL,
+    PRIMARY KEY (user_id),
+);
+
+-- t_sessions
+CREATE TABLE dbo.t_sessions (
+    session_id INT IDENTITY(1,1) NOT NULL,
+    user_id INT NOT NULL,
+    token NVARCHAR(128) NOT NULL,
+    valid_until DATETIME2(3) NOT NULL DEFAULT DATEADD(HOUR, 1, SYSUTCDATETIME()),
+    PRIMARY KEY (session_id),
+    FOREIGN KEY (user_id) REFERENCES dbo.t_users(user_id),
+);
+
+-- t_user_permissions
+CREATE TABLE dbo.t_user_has_permissions (
+    permission_id INT NOT NULL,
+    user_id INT NOT NULL,
+    PRIMARY KEY (permission_id, user_id),  
+    FOREIGN KEY (permission_id) REFERENCES dbo.t_permissions(permission_id),
+    FOREIGN KEY (user_id) REFERENCES dbo.t_users(user_id)
+);
+
+-- INSERTING DATA
+
+INSERT INTO dbo.t_permissions (permission_name) 
+VALUES ('users_view'), ('users_admin');
+
+
+INSERT INTO dbo.t_users (username, password, age, name, address) 
+VALUES 
+    ('johndoe', '$2b$10$6hmIP5zEUXlNcKwaXh3GauZ.dW2It9kEa1TxXVUdj.vLZD07J4Yvu', 30, 'John Doe', '123 Main St'),
+    ('janedoe', '$2b$10$Gg4c1ng5oaSDgUcUoG30buI44XCNdBnxZ1ybCVKfAnYtjJbimTJMK', 25, 'Jane Doe', '456 Side Ave');
+
+INSERT INTO dbo.t_user_has_permissions (permission_id, user_id) 
+VALUES 
+    (1, 1),  
+    (2, 1),  
+    (1, 2);  

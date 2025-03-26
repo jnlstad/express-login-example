@@ -22,3 +22,5 @@ then
 ```bash
     npm run dev:all
 ```
+
+go onto [localhost:3000](localhost:3000), then log in using either `johndoe` or `janedoe` with password `Hufflepuff123`

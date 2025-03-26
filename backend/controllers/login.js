@@ -22,14 +22,17 @@ export const login = async (req, res, next) => {
     const HASHED_SESSION_TOKEN = await sha256(SESSION_TOKEN);
 
     const result = await db.query(
-      "SELECT id FROM t_users WHERE username = :username",
+      "SELECT user_id FROM t_users WHERE username = :username",
       { replacements: { username } }
     );
-    const ID = result[0][0].id;
+    const ID = result[0][0].user_id;
 
-    await db.query("INSERT INTO t_sessions(id, token) VALUES (:id, :token)", {
-      replacements: { id: ID, token: HASHED_SESSION_TOKEN },
-    });
+    await db.query(
+      "INSERT INTO t_sessions(user_id, token) VALUES (:id, :token)",
+      {
+        replacements: { id: ID, token: HASHED_SESSION_TOKEN },
+      }
+    );
 
     res.cookie("session_token", SESSION_TOKEN, {
       httpOnly: true,
@@ -40,6 +43,7 @@ export const login = async (req, res, next) => {
 
     res.send(SESSION_TOKEN);
   } catch (err) {
+    console.log(err);
     return res.status(500).send("An internal server error has occured");
   }
 };

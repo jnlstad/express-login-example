@@ -8,7 +8,7 @@ export const getUser = async (req, res, next) => {
   }
 
   try {
-    const result = await db.query("SELECT * FROM t_users WHERE id = :id", {
+    const result = await db.query("SELECT * FROM t_users WHERE user_id = :id", {
       replacements: { id: id },
     });
     return res.send(result);

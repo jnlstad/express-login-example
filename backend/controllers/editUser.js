@@ -39,7 +39,7 @@ export const editUser = async (req, res, next) => {
 
   try {
     const result = await db.query(
-      `UPDATE t_users SET ${setters.join(",")} WHERE id = :id`,
+      `UPDATE t_users SET ${setters.join(",")} WHERE user_id = :id`,
       {
         replacements: { ...values, id: id },
       }

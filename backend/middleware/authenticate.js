@@ -23,9 +23,9 @@ export const authenticate = ({ permissions }) => {
       const result = await db.query(
         `
     SELECT DISTINCT perm.permission_name FROM t_sessions s
-    JOIN t_users u ON u.id = s.id
-    JOIN t_user_permissions p ON p.user_id = u.id
-    JOIN t_permissions perm ON p.permission_id = perm.id
+    JOIN t_users u ON u.user_id = s.user_id
+    JOIN t_user_has_permissions up ON up.user_id = u.user_id
+    JOIN t_permissions perm ON up.permission_id = perm.permission_id
     WHERE token = :HASHED_SESSION_TOKEN AND valid_until > SYSUTCDATETIME()`,
         { replacements: { HASHED_SESSION_TOKEN } }
       );
