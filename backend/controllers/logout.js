@@ -14,10 +14,10 @@ export const logout = async (req, res, next) => {
       "SELECT session_id FROM t_sessions WHERE token = :HASHED_SESSION_TOKEN",
       { replacements: { HASHED_SESSION_TOKEN } }
     );
-    const ID = result[0][0].id;
+    const ID = result[0][0].session_id;
 
     const updateResult = await db.query(
-      "UPDATE t_sessions SET valid_until = SYSUTCDATETIME() WHERE user_id = :ID AND valid_until > SYSUTCDATETIME()",
+      "UPDATE t_sessions SET valid_until = SYSUTCDATETIME() WHERE session_id = :ID AND valid_until > SYSUTCDATETIME()",
       { replacements: { ID } }
     );
 
